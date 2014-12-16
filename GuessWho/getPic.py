@@ -2,7 +2,7 @@
 
 
 #Gets a picture of the user and saves it as their name
-import picamera,time
+import picamera,time,json
 
 def getUserImage(name):
 
@@ -50,12 +50,28 @@ def getCharProfile():
             check=True
 
 #Asks if the person has a beard and/or moustache
-    facial hair = ""
-    while not(facial hair in["moustache","beard","both"]):
-        eyes = input("Do you have a beard, moustache or both?")
+    facialHair = ""
+    while not(facialHair in["moustache","beard","both","no"]):
+        facialHair = input("Do you have a beard, moustache or both?")
 
 #Asks if the person is wearing a hat
     check = False
     while check == False:
         if input("Are you wearing a hat?"):
             check=True
+
+def loadPeople():
+    try:
+        with open ("gw.txt",mode="r") as file:
+            people = json.load(file)
+    except IOError:
+        print("No people found")
+        people = []
+    return people
+
+people = loadPeople()
+
+def savePeople():
+    people = getCharProfile
+    people.append(person)
+    with open("gw.txt",mode="w") as file
