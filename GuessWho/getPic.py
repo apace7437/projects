@@ -5,28 +5,32 @@
 import picamera,time,json
 
 def getUserImage(name):
-
-  try:
-      with picamera.PiCamera() as camera:
-          check = False
-          while check == False:
-             camera.resolution = (1024,768)
-             camera.start_preview()
-             time.sleep(2)
-             filename = "{0}.jpeg".format(name)
-             camera.capture(filename)
-             camera.stop_preview()
-             if input("Are you happy with this?"):
-                 check=True
+    try:
+        with picamera.PiCamera() as camera:
+            check = False
+            while check == False:
+                camera.resolution = (1024,768)
+                camera.start_preview()
+                time.sleep(2)
+                filename = "{0}.jpeg".format(name)
+                camera.capture(filename)
+                camera.stop_preview()
+                valid = input("Are you happy with this?")
+                if valid =="yes" or valid =="y":
+                    check=True
 #Makes sure you don't get an error
-  except picamera.exc.PiCameraMMALError:
-      print("Camera not detected, please connect and restart")
-      filename=""
-pass
+    except picamera.exc.PiCameraMMALError:
+        print("Camera not detected, please connect and restart")
+        filename=""
+    return filename
 
-def getCharProfile():
+
+
+
 #Gets the person's name
+def getCharProfile():
     name = input("What is your name?")
+    filename=getUserImage(name)
 
 #Gets the person's gender
     gender = ""
@@ -44,10 +48,10 @@ def getCharProfile():
         eyes = input("What is your eye colour?")
 
 #Asks if the person is wearing glasses
-    check = False
-    while check == False:
-        if input("Are you wearing glasses?"):
-            check=True
+    if input("Are you wearing glasses y/n?").upper()=="y":
+        glasses=True
+    else:
+        glasses=False
 
 #Asks if the person has a beard and/or moustache
     facialHair = ""
@@ -55,14 +59,16 @@ def getCharProfile():
         facialHair = input("Do you have a beard, moustache or both?")
 
 #Asks if the person is wearing a hat
-    check = False
-    while check == False:
-        if input("Are you wearing a hat?"):
-            check=True
+    if input("Are you wearing a hat y/n?").upper()=="y":
+        glasses=True
+    else:
+        glasses=False
+
+    return(name,gender,hair,eyes,glasses,facialHair,filename)
 
 def loadPeople():
     try:
-        with open ("gw.txt",mode="r") as file:
+        with open ("person",mode="r") as file:
             people = json.load(file)
     except IOError:
         print("No people found")
@@ -72,6 +78,7 @@ def loadPeople():
 people = loadPeople()
 
 def savePeople():
-    people = getCharProfile
+    person = getCharProfile()
     people.append(person)
-    with open("gw.txt",mode="w") as file
+    with open("person",mode="w") as file:
+        json.dump(people, file)
